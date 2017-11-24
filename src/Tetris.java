@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Area;
+import java.text.DecimalFormat;
 
 /**
  * It`s my first Java project - Tetris game
@@ -10,11 +11,14 @@ import java.awt.geom.Area;
  * Created by Remar on 21.11.2017.
  */
 public class Tetris extends JFrame {
-    public int PLAY_FIELD_WIDTH = 250;
-    public int PLAY_FIELD_HEIGHT = PLAY_FIELD_WIDTH * 2;
+    int PLAY_FIELD_WIDTH = 250;
+    int PLAY_FIELD_HEIGHT = PLAY_FIELD_WIDTH * 2;
     int figure_counter;
     int figure_size = PLAY_FIELD_WIDTH / 10;
     int x, y;
+    double time = 0.00f;
+    int time_update = 10;
+    float speed = 1;
     PlayField playField;
     L_Figure l_figure;
     O_Figure o_figure;
@@ -62,18 +66,41 @@ public class Tetris extends JFrame {
     }
 
     class System_Side extends JPanel {
+        Timer timer;
         System_Side() {
             setLayout(new GridLayout(4, 2));
-            JLabel nextFig_label = (JLabel) add(new JLabel("Next Figure: "));
-            add(new JLabel("FIGURE"));
-            JLabel score_label = (JLabel) add(new JLabel("Score: "));
-            add(new JLabel("SCORE"));
-            JLabel timer_label = (JLabel) add(new JLabel("Timer: "));
-            add(new JLabel("TIMER"));
+            add(new JLabel("Next Figure: "));
+            JLabel nextFig_label = (JLabel) add(new JLabel("FIGURE"));
+            add(new JLabel("Score: "));
+            JLabel score_label = (JLabel) add(new JLabel("SCORE"));
+            add(new JLabel("Time: "));
+            JLabel time_label = (JLabel) add(new JLabel("" + time));
             JButton start_btn = (JButton) add(new JButton("Start"));
+            start_btn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    timer.start();
+                }
+            });
             JButton pause_btn = (JButton) add(new JButton("Pause"));
+            pause_btn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    timer.stop();
+                }
+            });
+
+            ActionListener timeUpdateTask = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    time_label.setText(new DecimalFormat("#0.00").format(time = time + 0.01));
+                    time_label.repaint();
+                }
+            };
+            timer = new Timer(time_update, timeUpdateTask);
         }
     }
+
 
     class PlayField extends JPanel {
         Color PLAY_FIELD_BACKGROUND = Color.CYAN;
