@@ -25,6 +25,7 @@ public class Tetris extends JFrame {
     Y_Figure y_figure;
     I_Figure i_figure;
     Z_Figure z_figure;
+    Timer timer;
 
 
 
@@ -66,7 +67,6 @@ public class Tetris extends JFrame {
     }
 
     class System_Side extends JPanel {
-        Timer timer;
         System_Side() {
             setLayout(new GridLayout(4, 2));
             add(new JLabel("Next Figure: "));
