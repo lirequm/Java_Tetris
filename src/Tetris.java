@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 public class Tetris extends JFrame {
     int PLAY_FIELD_WIDTH = 250;
     int PLAY_FIELD_HEIGHT = PLAY_FIELD_WIDTH * 2;
-    int figure_counter;
+    static int figure_counter = 0;
     int figure_size = PLAY_FIELD_WIDTH / 10;
     double time = 0.00f;
     int time_update = 100;
@@ -26,7 +26,8 @@ public class Tetris extends JFrame {
     Y_Figure y_figure;
     I_Figure i_figure;
     Z_Figure z_figure;
-    Timer timer;
+    Timer time_t;
+    Timer game_t;
 
 
     public Tetris() {
@@ -82,14 +83,16 @@ public class Tetris extends JFrame {
             start_btn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    timer.start();
+                    time_t.start();
+                    game_t.start();
                 }
             });
             JButton pause_btn = (JButton) add(new JButton("Pause"));
             pause_btn.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    timer.stop();
+                    time_t.stop();
+                    game_t.stop();
                 }
             });
 
@@ -100,7 +103,7 @@ public class Tetris extends JFrame {
                     time_label.repaint();
                 }
             };
-            timer = new Timer(time_update, timeUpdateTask);
+            time_t = new Timer(time_update, timeUpdateTask);
         }
     }
 
@@ -116,43 +119,47 @@ public class Tetris extends JFrame {
             super.paintComponent(g);
             setBackground(PLAY_FIELD_BACKGROUND);
             Graphics2D g2d = (Graphics2D) g;
-            AffineTransform transform = new AffineTransform();
-
-
-
-            ActionListener updateTask = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    transform.setToTranslation(0,1);
-                    g2d.setTransform(transform);
-                    figure.createTransformedArea(transform);
-                }
-            };
-            timer.addActionListener(updateTask);
-
 
             switch (figure_switch) {
                 case (0):
                     l_figure = new L_Figure(0, 5); //figure_size * 4, figure_size * 3);
-                    figure = l_figure.paint(g2d);
+                    figure = l_figure.getFigure();
+//                    figure = l_figure.paint(g2d);
                     break;
                 case (1):
                     o_figure = new O_Figure(0, 5); //figure_size * 4, figure_size * 2);
-                    figure = o_figure.paint(g2d);
+                    figure = o_figure.getFigure();
+//                    figure = o_figure.paint(g2d);
                     break;
                 case (2):
                     y_figure = new Y_Figure(0, 5); //figure_size * 3, figure_size * 2);
-                    figure = y_figure.paint(g2d);
+                    figure = y_figure.getFigure();
+//                    figure = y_figure.paint(g2d);
                     break;
                 case (3):
                     i_figure = new I_Figure(0, 5); //figure_size * 4, figure_size * 4);
-                    figure = i_figure.paint(g2d);
+                    i_figure.getFigure();
+//                    figure = i_figure.paint(g2d);
                     break;
                 case (4):
                     z_figure = new Z_Figure(0, 5); //figure_size * 3, figure_size * 2);
-                    figure = z_figure.paint(g2d);
+                    figure = z_figure.getFigure();
+//                    figure = z_figure.paint(g2d);
                     break;
             }
+
+            g2d.fill(figure);
+            ActionListener updateTask = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    g2d.setColor(Color.RED);
+                    System.out.println("figure filled");
+                    figure.transform(AffineTransform.getTranslateInstance(0, 5));
+                    g2d.fill(figure);
+                    repaint();
+                }
+            };
+            game_t = new Timer(1000, updateTask);
         }
     }
 
@@ -176,17 +183,25 @@ public class Tetris extends JFrame {
             this.color = color;
         }
 
-        public Area paint(Graphics2D g2d) {
-            g2d.setColor(color);
+        Area getFigure() {
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x, y + (2 * figure_size), figure_size, figure_size)));
             a.add(new Area(new Rectangle(x + figure_size, y + (2 * figure_size), figure_size, figure_size)));
-            g2d.fill(a);
-            g2d.setColor(Color.BLACK);
-            g2d.draw(a);
             return a;
         }
+
+//        public Area paint(Graphics2D g2d) {
+//            g2d.setColor(color);
+//            Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
+//            a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x, y + (2 * figure_size), figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x + figure_size, y + (2 * figure_size), figure_size, figure_size)));
+//            g2d.fill(a);
+//            g2d.setColor(Color.BLACK);
+//            g2d.draw(a);
+//            return a;
+//        }
     }
 
     class O_Figure {
@@ -208,17 +223,25 @@ public class Tetris extends JFrame {
             this.color = color;
         }
 
-        public Area paint(Graphics2D g2d) {
-            g2d.setColor(color);
+        Area getFigure() {
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x + figure_size, y + figure_size, figure_size, figure_size)));
-            g2d.fill(a);
-            g2d.setColor(Color.BLACK);
-            g2d.draw(a);
             return a;
         }
+
+//        public Area paint(Graphics2D g2d) {
+//            g2d.setColor(color);
+//            Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
+//            a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x + figure_size, y + figure_size, figure_size, figure_size)));
+//            g2d.fill(a);
+//            g2d.setColor(Color.BLACK);
+//            g2d.draw(a);
+//            return a;
+//        }
     }
 
     class Y_Figure {
@@ -240,17 +263,25 @@ public class Tetris extends JFrame {
             this.color = color;
         }
 
-        public Area paint(Graphics2D g2d) {
-            g2d.setColor(color);
+        Area getFigure() {
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x + (2 * figure_size), y, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x + figure_size, y + figure_size, figure_size, figure_size)));
-            g2d.fill(a);
-            g2d.setColor(Color.BLACK);
-            g2d.draw(a);
             return a;
         }
+
+//        public Area paint(Graphics2D g2d) {
+//            g2d.setColor(color);
+//            Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
+//            a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x + (2 * figure_size), y, figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x + figure_size, y + figure_size, figure_size, figure_size)));
+//            g2d.fill(a);
+//            g2d.setColor(Color.BLACK);
+//            g2d.draw(a);
+//            return a;
+//        }
     }
 
     class I_Figure {
@@ -272,17 +303,25 @@ public class Tetris extends JFrame {
             this.color = color;
         }
 
-        public Area paint(Graphics2D g2d) {
-            g2d.setColor(color);
+        Area getFigure() {
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x, y + (2 * figure_size), figure_size, figure_size)));
             a.add(new Area(new Rectangle(x, y + (3 * figure_size), figure_size, figure_size)));
-            g2d.fill(a);
-            g2d.setColor(Color.BLACK);
-            g2d.draw(a);
             return a;
         }
+
+//        public Area paint(Graphics2D g2d) {
+//            g2d.setColor(color);
+//            Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
+//            a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x, y + (2 * figure_size), figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x, y + (3 * figure_size), figure_size, figure_size)));
+//            g2d.fill(a);
+//            g2d.setColor(Color.BLACK);
+//            g2d.draw(a);
+//            return a;
+//        }
     }
 
     class Z_Figure {
@@ -304,16 +343,24 @@ public class Tetris extends JFrame {
             this.color = color;
         }
 
-        public Area paint(Graphics2D g2d) {
-            g2d.setColor(color);
+        Area getFigure() {
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x + figure_size, y + figure_size, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x + (2 * figure_size), y + figure_size, figure_size, figure_size)));
-            g2d.fill(a);
-            g2d.setColor(Color.BLACK);
-            g2d.draw(a);
             return a;
         }
+
+//        public Area paint(Graphics2D g2d) {
+//            g2d.setColor(color);
+//            Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
+//            a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x + figure_size, y + figure_size, figure_size, figure_size)));
+//            a.add(new Area(new Rectangle(x + (2 * figure_size), y + figure_size, figure_size, figure_size)));
+//            g2d.fill(a);
+//            g2d.setColor(Color.BLACK);
+//            g2d.draw(a);
+//            return a;
+//        }
     }
 }
