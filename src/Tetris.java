@@ -2,12 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.text.DecimalFormat;
 
 /**
  * It`s my first Java project - Tetris game
- *
+ * <p>
  * Created by Remar on 21.11.2017.
  */
 public class Tetris extends JFrame {
@@ -15,10 +16,10 @@ public class Tetris extends JFrame {
     int PLAY_FIELD_HEIGHT = PLAY_FIELD_WIDTH * 2;
     int figure_counter;
     int figure_size = PLAY_FIELD_WIDTH / 10;
-    int x, y;
     double time = 0.00f;
-    int time_update = 10;
+    int time_update = 100;
     float speed = 1;
+    int score = 100;
     PlayField playField;
     L_Figure l_figure;
     O_Figure o_figure;
@@ -26,7 +27,6 @@ public class Tetris extends JFrame {
     I_Figure i_figure;
     Z_Figure z_figure;
     Timer timer;
-
 
 
     public Tetris() {
@@ -56,10 +56,13 @@ public class Tetris extends JFrame {
         add(playField);
         add(sys_panel);
 
-
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
         setVisible(true);
+
+        while (figure_counter < 1) {
+            playField.figure_switch = (int) (Math.random() * 5);
+        }
     }
 
     public static void main(String[] args) {
@@ -72,9 +75,9 @@ public class Tetris extends JFrame {
             add(new JLabel("Next Figure: "));
             JLabel nextFig_label = (JLabel) add(new JLabel("FIGURE"));
             add(new JLabel("Score: "));
-            JLabel score_label = (JLabel) add(new JLabel("SCORE"));
+            JLabel score_label = (JLabel) add(new JLabel("" + score));
             add(new JLabel("Time: "));
-            JLabel time_label = (JLabel) add(new JLabel("" + time));
+            JLabel time_label = (JLabel) add(new JLabel("0.00"));
             JButton start_btn = (JButton) add(new JButton("Start"));
             start_btn.addActionListener(new ActionListener() {
                 @Override
@@ -93,7 +96,7 @@ public class Tetris extends JFrame {
             ActionListener timeUpdateTask = new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    time_label.setText(new DecimalFormat("#0.00").format(time = time + 0.01));
+                    time_label.setText(new DecimalFormat("#0.00").format(time = time + 0.1));
                     time_label.repaint();
                 }
             };
@@ -105,50 +108,60 @@ public class Tetris extends JFrame {
     class PlayField extends JPanel {
         Color PLAY_FIELD_BACKGROUND = Color.CYAN;
         Area bottom_area = new Area(new Rectangle(0, PLAY_FIELD_HEIGHT, PLAY_FIELD_WIDTH, PLAY_FIELD_WIDTH / 10));
-
+        int figure_switch;
+        Area figure;
 
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
             setBackground(PLAY_FIELD_BACKGROUND);
             Graphics2D g2d = (Graphics2D) g;
+            AffineTransform transform = new AffineTransform();
 
-            while (figure_counter < 1) {
-                int random = (int) (Math.random() * 5);
-                switch (random) {
-                    case (0):
-                        l_figure = new L_Figure(figure_size * 4, -figure_size * 3);
-                        l_figure.paint(g2d);
-                        break;
-                    case (1):
-                        o_figure = new O_Figure();
-                        o_figure.paint(g2d);
-                        break;
-                    case (2):
-                        y_figure = new Y_Figure();
-                        y_figure.paint(g2d);
-                        break;
-                    case (3):
-                        i_figure = new I_Figure();
-                        i_figure.paint(g2d);
-                        break;
-                    case (4):
-                        z_figure = new Z_Figure();
-                        z_figure.paint(g2d);
-                        break;
+
+
+            ActionListener updateTask = new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    transform.setToTranslation(0,1);
+                    g2d.setTransform(transform);
+                    figure.createTransformedArea(transform);
                 }
+            };
+            timer.addActionListener(updateTask);
+
+
+            switch (figure_switch) {
+                case (0):
+                    l_figure = new L_Figure(0, 5); //figure_size * 4, figure_size * 3);
+                    figure = l_figure.paint(g2d);
+                    break;
+                case (1):
+                    o_figure = new O_Figure(0, 5); //figure_size * 4, figure_size * 2);
+                    figure = o_figure.paint(g2d);
+                    break;
+                case (2):
+                    y_figure = new Y_Figure(0, 5); //figure_size * 3, figure_size * 2);
+                    figure = y_figure.paint(g2d);
+                    break;
+                case (3):
+                    i_figure = new I_Figure(0, 5); //figure_size * 4, figure_size * 4);
+                    figure = i_figure.paint(g2d);
+                    break;
+                case (4):
+                    z_figure = new Z_Figure(0, 5); //figure_size * 3, figure_size * 2);
+                    figure = z_figure.paint(g2d);
+                    break;
             }
         }
     }
 
-    void update(){
-
-    }
 
     class L_Figure {
+        int x, y;
         Color color = Color.RED;
 
-        public L_Figure(){
+        public L_Figure() {
             figure_counter++;
         }
 
@@ -163,7 +176,7 @@ public class Tetris extends JFrame {
             this.color = color;
         }
 
-        public void paint(Graphics2D g2d){
+        public Area paint(Graphics2D g2d) {
             g2d.setColor(color);
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
@@ -172,28 +185,30 @@ public class Tetris extends JFrame {
             g2d.fill(a);
             g2d.setColor(Color.BLACK);
             g2d.draw(a);
+            return a;
         }
     }
 
     class O_Figure {
+        int x, y;
         Color color = Color.RED;
 
-        public O_Figure(){
+        public O_Figure() {
             figure_counter++;
         }
 
-        public O_Figure(int x_pos, int y_pos){
+        public O_Figure(int x_pos, int y_pos) {
             this();
             x = x_pos;
             y = y_pos;
         }
 
-        public O_Figure(int x_pos, int y_pos, Color color){
+        public O_Figure(int x_pos, int y_pos, Color color) {
             this(x_pos, y_pos);
             this.color = color;
         }
 
-        public void paint(Graphics2D g2d){
+        public Area paint(Graphics2D g2d) {
             g2d.setColor(color);
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
@@ -202,28 +217,30 @@ public class Tetris extends JFrame {
             g2d.fill(a);
             g2d.setColor(Color.BLACK);
             g2d.draw(a);
+            return a;
         }
     }
 
     class Y_Figure {
+        int x, y;
         Color color = Color.RED;
 
-        public Y_Figure(){
+        public Y_Figure() {
             figure_counter++;
         }
 
-        public Y_Figure(int x_pos, int y_pos){
+        public Y_Figure(int x_pos, int y_pos) {
             this();
             x = x_pos;
             y = y_pos;
         }
 
-        public Y_Figure(int x_pos, int y_pos, Color color){
+        public Y_Figure(int x_pos, int y_pos, Color color) {
             this(x_pos, y_pos);
             this.color = color;
         }
 
-        public void paint(Graphics2D g2d){
+        public Area paint(Graphics2D g2d) {
             g2d.setColor(color);
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
@@ -232,28 +249,30 @@ public class Tetris extends JFrame {
             g2d.fill(a);
             g2d.setColor(Color.BLACK);
             g2d.draw(a);
+            return a;
         }
     }
 
     class I_Figure {
+        int x, y;
         Color color = Color.RED;
 
-        public I_Figure(){
+        public I_Figure() {
             figure_counter++;
         }
 
-        public I_Figure(int x_pos, int y_pos){
+        public I_Figure(int x_pos, int y_pos) {
             this();
             x = x_pos;
             y = y_pos;
         }
 
-        public I_Figure(int x_pos, int y_pos, Color color){
+        public I_Figure(int x_pos, int y_pos, Color color) {
             this(x_pos, y_pos);
             this.color = color;
         }
 
-        public void paint(Graphics2D g2d){
+        public Area paint(Graphics2D g2d) {
             g2d.setColor(color);
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
@@ -262,28 +281,30 @@ public class Tetris extends JFrame {
             g2d.fill(a);
             g2d.setColor(Color.BLACK);
             g2d.draw(a);
+            return a;
         }
     }
 
     class Z_Figure {
+        int x, y;
         Color color = Color.RED;
 
-        public Z_Figure(){
+        public Z_Figure() {
             figure_counter++;
         }
 
-        public Z_Figure(int x_pos, int y_pos){
+        public Z_Figure(int x_pos, int y_pos) {
             this();
             x = x_pos;
             y = y_pos;
         }
 
-        public Z_Figure(int x_pos, int y_pos, Color color){
+        public Z_Figure(int x_pos, int y_pos, Color color) {
             this(x_pos, y_pos);
             this.color = color;
         }
 
-        public void paint(Graphics2D g2d){
+        public Area paint(Graphics2D g2d) {
             g2d.setColor(color);
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
@@ -292,6 +313,7 @@ public class Tetris extends JFrame {
             g2d.fill(a);
             g2d.setColor(Color.BLACK);
             g2d.draw(a);
+            return a;
         }
     }
 }
