@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.text.DecimalFormat;
@@ -60,10 +62,6 @@ public class Tetris extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         pack();
         setVisible(true);
-
-        while (figure_counter < 1) {
-            playField.figure_switch = (int) (Math.random() * 5);
-        }
     }
 
     public static void main(String[] args) {
@@ -109,6 +107,36 @@ public class Tetris extends JFrame {
 
 
     class PlayField extends JPanel {
+        PlayField(){
+            setFocusable(true);
+            game_t = new Timer(1000, new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    figure.transform(AffineTransform.getTranslateInstance(0, figure_size));
+                    playField.repaint();
+                }
+            });
+
+            addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyPressed(KeyEvent e) {
+                    switch (e.getKeyCode()){
+                        case KeyEvent.VK_LEFT:
+                            playField.figure.transform(AffineTransform.getTranslateInstance(-figure_size, 0));
+                            System.out.println("Left pressed");
+                            playField.repaint();
+                            break;
+                        case KeyEvent.VK_RIGHT:
+                            playField.figure.transform(AffineTransform.getTranslateInstance(figure_size, 0));
+                            System.out.println("Right pressed");
+                            playField.repaint();
+                            break;
+                    }
+                }
+            });
+
+            requestFocus();
+        }
         Color PLAY_FIELD_BACKGROUND = Color.CYAN;
         Area bottom_area = new Area(new Rectangle(0, PLAY_FIELD_HEIGHT, PLAY_FIELD_WIDTH, PLAY_FIELD_WIDTH / 10));
         int figure_switch;
@@ -120,46 +148,41 @@ public class Tetris extends JFrame {
             setBackground(PLAY_FIELD_BACKGROUND);
             Graphics2D g2d = (Graphics2D) g;
 
-            switch (figure_switch) {
-                case (0):
-                    l_figure = new L_Figure(0, 5); //figure_size * 4, figure_size * 3);
-                    figure = l_figure.getFigure();
-//                    figure = l_figure.paint(g2d);
-                    break;
-                case (1):
-                    o_figure = new O_Figure(0, 5); //figure_size * 4, figure_size * 2);
-                    figure = o_figure.getFigure();
+            if (figure_counter < 1) {
+                playField.figure_switch = (int) (Math.random() * 5);
+
+                switch (figure_switch) {
+                    case (0):
+                        l_figure = new L_Figure(figure_size * 4, -figure_size * 4);
+                        figure = l_figure.getFigure();
+                        break;
+                    case (1):
+                        o_figure = new O_Figure(figure_size * 4, -figure_size * 3);
+                        figure = o_figure.getFigure();
 //                    figure = o_figure.paint(g2d);
-                    break;
-                case (2):
-                    y_figure = new Y_Figure(0, 5); //figure_size * 3, figure_size * 2);
-                    figure = y_figure.getFigure();
+                        break;
+                    case (2):
+                        y_figure = new Y_Figure(figure_size * 3, -figure_size * 3);
+                        figure = y_figure.getFigure();
 //                    figure = y_figure.paint(g2d);
-                    break;
-                case (3):
-                    i_figure = new I_Figure(0, 5); //figure_size * 4, figure_size * 4);
-                    i_figure.getFigure();
+                        break;
+                    case (3):
+                        i_figure = new I_Figure(figure_size * 4, -figure_size * 5);
+                        i_figure.getFigure();
 //                    figure = i_figure.paint(g2d);
-                    break;
-                case (4):
-                    z_figure = new Z_Figure(0, 5); //figure_size * 3, figure_size * 2);
-                    figure = z_figure.getFigure();
+                        break;
+                    case (4):
+                        z_figure = new Z_Figure(figure_size * 3, -figure_size * 3);
+                        figure = z_figure.getFigure();
 //                    figure = z_figure.paint(g2d);
-                    break;
+                        break;
+                }
             }
 
+            g2d.setColor(Color.RED);
+            System.out.println("figure filled");
             g2d.fill(figure);
-            ActionListener updateTask = new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    g2d.setColor(Color.RED);
-                    System.out.println("figure filled");
-                    figure.transform(AffineTransform.getTranslateInstance(0, 5));
-                    g2d.fill(figure);
-                    repaint();
-                }
-            };
-            game_t = new Timer(1000, updateTask);
+            playField.requestFocus();
         }
     }
 
