@@ -23,13 +23,17 @@ public class Tetris extends JFrame {
     float speed = 1;
     int score = 100;
     PlayField playField;
+    NextFigure nextFigure;
     L_Figure l_figure;
+    L_Mirrored_Figure l_mirrored_figure;
     O_Figure o_figure;
     Y_Figure y_figure;
     I_Figure i_figure;
     Z_Figure z_figure;
+    Z_Mirrored_Figure z_mirrored_figure;
     Timer time_t;
     Timer game_t;
+    Color figure_color = Color.RED;
 
 
     public Tetris() {
@@ -55,7 +59,6 @@ public class Tetris extends JFrame {
         setLayout(new GridLayout(1, 2));
         JPanel sys_panel = new System_Side();
         playField = new PlayField();
-        playField.setPreferredSize(new Dimension(PLAY_FIELD_WIDTH, PLAY_FIELD_HEIGHT));
         add(playField);
         add(sys_panel);
 
@@ -72,7 +75,8 @@ public class Tetris extends JFrame {
         System_Side() {
             setLayout(new GridLayout(4, 2));
             add(new JLabel("Next Figure: "));
-            JLabel nextFig_label = (JLabel) add(new JLabel("FIGURE"));
+            nextFigure = new NextFigure();
+            JPanel nextFig_panel = (JPanel) add(nextFigure);
             add(new JLabel("Score: "));
             JLabel score_label = (JLabel) add(new JLabel("" + score));
             add(new JLabel("Time: "));
@@ -105,10 +109,15 @@ public class Tetris extends JFrame {
         }
     }
 
-
     class PlayField extends JPanel {
+        Color PLAY_FIELD_BACKGROUND = Color.CYAN;
+        int figure_switch = (int) (Math.random() * 7);
+        Area figure;
+
         PlayField(){
+            setPreferredSize(new Dimension(PLAY_FIELD_WIDTH, PLAY_FIELD_HEIGHT));
             setFocusable(true);
+
             game_t = new Timer(1000, new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -144,14 +153,8 @@ public class Tetris extends JFrame {
 
             requestFocus();
         }
-        Color PLAY_FIELD_BACKGROUND = Color.CYAN;
-        Area bottom_area = new Area(new Rectangle(0, PLAY_FIELD_HEIGHT, PLAY_FIELD_WIDTH, PLAY_FIELD_WIDTH / 10));
-        int figure_switch;
-        Area figure;
 
         void figure_switcher(){
-            playField.figure_switch = (int) (Math.random() * 5);
-
             switch (figure_switch) {
                 case (0):
                     l_figure = new L_Figure(figure_size * 4, -figure_size * 4);
@@ -160,24 +163,29 @@ public class Tetris extends JFrame {
                 case (1):
                     o_figure = new O_Figure(figure_size * 4, -figure_size * 3);
                     figure = o_figure.getFigure();
-//                    figure = o_figure.paint(g2d);
                     break;
                 case (2):
                     y_figure = new Y_Figure(figure_size * 3, -figure_size * 3);
                     figure = y_figure.getFigure();
-//                    figure = y_figure.paint(g2d);
                     break;
                 case (3):
                     i_figure = new I_Figure(figure_size * 4, -figure_size * 5);
                     figure = i_figure.getFigure();
-//                    figure = i_figure.paint(g2d);
                     break;
                 case (4):
                     z_figure = new Z_Figure(figure_size * 3, -figure_size * 3);
                     figure = z_figure.getFigure();
-//                    figure = z_figure.paint(g2d);
+                    break;
+                case (5):
+                    l_mirrored_figure = new L_Mirrored_Figure();
+                    figure = l_mirrored_figure.getFigure();
+                    break;
+                case (6):
+                    z_mirrored_figure = new Z_Mirrored_Figure();
+                    figure = z_mirrored_figure.getFigure();
                     break;
             }
+            playField.figure_switch = (int) (Math.random() * 7);
         }
 
         @Override
@@ -190,9 +198,56 @@ public class Tetris extends JFrame {
                 figure_switcher();
             }
 
-            g2d.setColor(Color.RED);
+            g2d.setColor(figure_color);
             g2d.fill(figure);
             playField.requestFocus();
+        }
+    }
+
+    class NextFigure extends JPanel {
+        Area nextFigure;
+        AffineTransform affineTransform;
+
+        void nextFigure_switcher(){
+            switch (playField.figure_switch) {
+                case (0):
+                    l_figure = new L_Figure();
+                    nextFigure = l_figure.getFigure();
+                    break;
+                case (1):
+                    o_figure = new O_Figure();
+                    nextFigure = o_figure.getFigure();
+                    break;
+                case (2):
+                    y_figure = new Y_Figure();
+                    nextFigure = y_figure.getFigure();
+                    break;
+                case (3):
+                    i_figure = new I_Figure();
+                    nextFigure = i_figure.getFigure();
+                    break;
+                case (4):
+                    z_figure = new Z_Figure();
+                    nextFigure = z_figure.getFigure();
+                    break;
+                case (5):
+                    l_mirrored_figure = new L_Mirrored_Figure();
+                    nextFigure = l_mirrored_figure.getFigure();
+                    break;
+                case (6):
+                    z_mirrored_figure = new Z_Mirrored_Figure();
+                    nextFigure = z_mirrored_figure.getFigure();
+                    break;
+            }
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            Graphics2D g2d = (Graphics2D)g;
+            nextFigure_switcher();
+            g2d.setColor(figure_color);
+            g2d.fill(nextFigure);
         }
     }
 
@@ -200,11 +255,17 @@ public class Tetris extends JFrame {
     class L_Figure {
         int x, y;
 
+        public L_Figure() {
+            x = 0;
+            y = 0;
+        }
+
         public L_Figure(int x_pos, int y_pos) {
             figure_counter++;
             x = x_pos;
             y = y_pos;
         }
+
         Area getFigure() {
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
@@ -214,14 +275,43 @@ public class Tetris extends JFrame {
         }
     }
 
+    class L_Mirrored_Figure {
+        int x, y;
+
+        public L_Mirrored_Figure() {
+            x = 0;
+            y = 0;
+        }
+
+        public L_Mirrored_Figure(int x_pos, int y_pos) {
+            figure_counter++;
+            x = x_pos;
+            y = y_pos;
+        }
+
+        Area getFigure() {
+            Area a = new Area(new Rectangle(x + figure_size, y, figure_size, figure_size));
+            a.add(new Area(new Rectangle(x + figure_size, y + figure_size, figure_size, figure_size)));
+            a.add(new Area(new Rectangle(x + figure_size, y + (2 * figure_size), figure_size, figure_size)));
+            a.add(new Area(new Rectangle(x, y + (2 * figure_size), figure_size, figure_size)));
+            return a;
+        }
+    }
+
     class O_Figure {
         int x, y;
+
+        public O_Figure() {
+            x = 0;
+            y = 0;
+        }
 
         public O_Figure(int x_pos, int y_pos) {
             figure_counter++;
             x = x_pos;
             y = y_pos;
         }
+
         Area getFigure() {
             Area a = new Area(new Rectangle(x, y, figure_size, figure_size));
             a.add(new Area(new Rectangle(x, y + figure_size, figure_size, figure_size)));
@@ -233,6 +323,11 @@ public class Tetris extends JFrame {
 
     class Y_Figure {
         int x, y;
+
+        public Y_Figure() {
+            x = 0;
+            y = 0;
+        }
 
         public Y_Figure(int x_pos, int y_pos) {
             figure_counter++;
@@ -252,6 +347,11 @@ public class Tetris extends JFrame {
     class I_Figure {
         int x, y;
 
+        public I_Figure() {
+            x = 0;
+            y = 0;
+        }
+
         public I_Figure(int x_pos, int y_pos) {
             figure_counter++;
             x = x_pos;
@@ -270,6 +370,11 @@ public class Tetris extends JFrame {
     class Z_Figure {
         int x, y;
 
+        public Z_Figure() {
+            x = 0;
+            y = 0;
+        }
+
         public Z_Figure(int x_pos, int y_pos) {
             figure_counter++;
             x = x_pos;
@@ -281,6 +386,29 @@ public class Tetris extends JFrame {
             a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x + figure_size, y + figure_size, figure_size, figure_size)));
             a.add(new Area(new Rectangle(x + (2 * figure_size), y + figure_size, figure_size, figure_size)));
+            return a;
+        }
+    }
+
+    class Z_Mirrored_Figure {
+        int x, y;
+
+        public Z_Mirrored_Figure() {
+            x = 0;
+            y = 0;
+        }
+
+        public Z_Mirrored_Figure(int x_pos, int y_pos) {
+            figure_counter++;
+            x = x_pos;
+            y = y_pos;
+        }
+
+        Area getFigure() {
+            Area a = new Area(new Rectangle(x, y + figure_size, figure_size, figure_size));
+            a.add(new Area(new Rectangle(x + figure_size, y, figure_size, figure_size)));
+            a.add(new Area(new Rectangle(x + figure_size, y + figure_size, figure_size, figure_size)));
+            a.add(new Area(new Rectangle(x + (2 * figure_size), y, figure_size, figure_size)));
             return a;
         }
     }
