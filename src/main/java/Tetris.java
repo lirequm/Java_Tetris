@@ -14,9 +14,9 @@ import java.text.DecimalFormat;
  * Created by Remar on 21.11.2017.
  */
 public class Tetris extends JFrame {
+    static int figure_counter = 0;
     int PLAY_FIELD_WIDTH = 250;
     int PLAY_FIELD_HEIGHT = PLAY_FIELD_WIDTH * 2;
-    static int figure_counter = 0;
     int figure_size = PLAY_FIELD_WIDTH / 10;
     double time = 0.00f;
     int time_update = 100;
@@ -48,7 +48,6 @@ public class Tetris extends JFrame {
         MenuItem close_btn = new MenuItem("Close");
         file_menu.add(close_btn);
         close_btn.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0);
             }
@@ -72,6 +71,8 @@ public class Tetris extends JFrame {
     }
 
     class System_Side extends JPanel {
+        JLabel time_label;
+
         System_Side() {
             setLayout(new GridLayout(4, 2));
             add(new JLabel("Next Figure: "));
@@ -80,10 +81,9 @@ public class Tetris extends JFrame {
             add(new JLabel("Score: "));
             JLabel score_label = (JLabel) add(new JLabel("" + score));
             add(new JLabel("Time: "));
-            JLabel time_label = (JLabel) add(new JLabel("0.00"));
+            time_label = (JLabel) add(new JLabel("0.00"));
             JButton start_btn = (JButton) add(new JButton("Start"));
             start_btn.addActionListener(new ActionListener() {
-                @Override
                 public void actionPerformed(ActionEvent e) {
                     time_t.start();
                     game_t.start();
@@ -91,21 +91,25 @@ public class Tetris extends JFrame {
             });
             JButton pause_btn = (JButton) add(new JButton("Pause"));
             pause_btn.addActionListener(new ActionListener() {
-                @Override
                 public void actionPerformed(ActionEvent e) {
                     time_t.stop();
                     game_t.stop();
                 }
             });
 
+
+
             ActionListener timeUpdateTask = new ActionListener() {
-                @Override
                 public void actionPerformed(ActionEvent e) {
-                    time_label.setText(new DecimalFormat("#0.00").format(time = time + 0.1));
-                    time_label.repaint();
+                    label_update();
                 }
             };
             time_t = new Timer(time_update, timeUpdateTask);
+        }
+
+        void label_update() {
+            time_label.setText(new DecimalFormat("#0.00").format(time = time + 0.1));
+            time_label.repaint();
         }
     }
 
@@ -119,7 +123,6 @@ public class Tetris extends JFrame {
             setFocusable(true);
 
             game_t = new Timer(1000, new ActionListener() {
-                @Override
                 public void actionPerformed(ActionEvent e) {
                     if (bottom_area == null){
                         if (figure.getBounds().y < PLAY_FIELD_HEIGHT - figure.getBounds().height)
