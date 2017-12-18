@@ -140,11 +140,13 @@ public class Tetris extends JFrame {
                             if (!figure_clone.isEmpty()) {
                                 figure.transform(AffineTransform.getTranslateInstance(0, -figure_size));
                                 bottom_area.add(figure);
+                                fillingCheck();
                                 figure_counter--;
                             }
                         }
                         else {
                             bottom_area.add(figure);
+                            fillingCheck();
                             figure_counter--;
                         }
                     }
@@ -216,12 +218,14 @@ public class Tetris extends JFrame {
                                             if (!figure_clone.isEmpty()) {
                                                 figure.transform(AffineTransform.getTranslateInstance(0, -figure_size));
                                                 bottom_area.add(figure);
+                                                fillingCheck();
                                                 figure_counter--;
                                                 break;
                                             }
                                         }
                                     else {
                                         bottom_area.add(figure);
+                                        fillingCheck();
                                         figure_counter--;
                                     }
                                 }
@@ -235,6 +239,32 @@ public class Tetris extends JFrame {
             });
 
             requestFocus();
+        }
+
+        void fillingCheck() {
+            int y = PLAY_FIELD_HEIGHT - figure_size;
+            while (y > 0) {
+                if (bottom_area.contains(0, y, PLAY_FIELD_WIDTH, figure_size)) {
+                    Area down_area = new Area(new Rectangle(0, y + figure_size, PLAY_FIELD_WIDTH, PLAY_FIELD_HEIGHT));
+                    down_area.intersect(bottom_area);
+                    Area upper_area = new Area(new Rectangle(0, y - PLAY_FIELD_HEIGHT, PLAY_FIELD_WIDTH, PLAY_FIELD_HEIGHT));
+                    upper_area.intersect(bottom_area);
+                    if(!upper_area.isEmpty()) {
+                        upper_area.transform(AffineTransform.getTranslateInstance(0, +figure_size));
+                        if(!down_area.isEmpty()) {
+                            bottom_area = down_area;
+                            bottom_area.add(upper_area);
+                        } else {
+                            bottom_area = upper_area;
+                        }
+                    } else {
+                        if(!down_area.isEmpty()) {
+                            bottom_area = down_area;
+                        }
+                    }
+                }
+                y -= figure_size;
+            }
         }
 
         void figure_switcher(){
