@@ -22,19 +22,19 @@ public class Rotate {
                 System.out.println("Figure Y rotated");
                 break;
             case (3):
-                //TODO RotateIFigure HERE
+                new RotateIFigure(playField);
                 System.out.println("Figure I rotated");
                 break;
             case (4):
-                //TODO RotateZFigure HERE
+                new RotateZFigure(playField);
                 System.out.println("Figure Z rotated");
                 break;
             case (5):
-                //TODO RotateJFigure HERE
+                new RotateJFigure(playField);
                 System.out.println("Figure J rotated");
                 break;
             case (6):
-                //TODO RotateSFigure HERE
+                new RotateSFigure(playField);
                 System.out.println("Figure S rotated");
                 break;
         }

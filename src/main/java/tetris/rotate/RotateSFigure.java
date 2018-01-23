@@ -5,9 +5,9 @@ import tetris.PlayField;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 
-class RotateYFigure {
+class RotateSFigure {
 
-    RotateYFigure(PlayField playField) {
+    RotateSFigure(PlayField playField) {
         rotate(playField);
     }
 
@@ -32,42 +32,14 @@ class RotateYFigure {
                     break;
                 case (1):
                     figureClone.transform(AffineTransform.getQuadrantRotateInstance(
-                            1,
+                            -1,
                             figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
                             figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
                     if((figureClone.getBounds().x >= 0)
                             && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
                         figure.transform(AffineTransform.getQuadrantRotateInstance(
-                                1,
+                                -1,
                                 figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
-                                figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                        playField.figurePos = 2;
-                    }
-                    break;
-                case (2):
-                    figureClone.transform(AffineTransform.getQuadrantRotateInstance(
-                            1,
-                            figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
-                            figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                    if((figureClone.getBounds().x >= 0)
-                            && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
-                        figure.transform(AffineTransform.getQuadrantRotateInstance(
-                                1,
-                                figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
-                                figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                        playField.figurePos = 3;
-                    }
-                    break;
-                case (3):
-                    figureClone.transform(AffineTransform.getQuadrantRotateInstance(
-                            1,
-                            figure.getBounds().x + (playField.getFigureXSize() / 2),
-                            figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                    if((figureClone.getBounds().x >= 0)
-                            && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
-                        figure.transform(AffineTransform.getQuadrantRotateInstance(
-                                1,
-                                figure.getBounds().x + (playField.getFigureXSize() / 2),
                                 figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
                         playField.figurePos = 0;
                     }
@@ -94,50 +66,17 @@ class RotateYFigure {
                     break;
                 case (1):
                     figureClone.transform(AffineTransform.getQuadrantRotateInstance(
-                            1,
+                            -1,
                             figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
                             figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
                     if((figureClone.getBounds().x >= 0)
                             && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
                         figureClone.intersect(playField.getBottomArea());
                         if (figureClone.isEmpty()) {
+                            System.out.println((figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width));
                             figure.transform(AffineTransform.getQuadrantRotateInstance(
-                                    1,
+                                    -1,
                                     figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
-                                    figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                            playField.figurePos = 2;
-                        }
-                    }
-                    break;
-                case (2):
-                    figureClone.transform(AffineTransform.getQuadrantRotateInstance(
-                            1,
-                            figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
-                            figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                    if((figureClone.getBounds().x >= 0)
-                            && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
-                        figureClone.intersect(playField.getBottomArea());
-                        if (figureClone.isEmpty()) {
-                            figure.transform(AffineTransform.getQuadrantRotateInstance(
-                                    1,
-                                    figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
-                                    figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                            playField.figurePos = 3;
-                        }
-                    }
-                    break;
-                case (3):
-                    figureClone.transform(AffineTransform.getQuadrantRotateInstance(
-                            1,
-                            figure.getBounds().x + (playField.getFigureXSize() / 2),
-                            figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                    if((figureClone.getBounds().x >= 0)
-                            && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
-                        figureClone.intersect(playField.getBottomArea());
-                        if (figureClone.isEmpty()) {
-                            figure.transform(AffineTransform.getQuadrantRotateInstance(
-                                    1,
-                                    figure.getBounds().x + (playField.getFigureXSize() / 2),
                                     figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
                             playField.figurePos = 0;
                         }

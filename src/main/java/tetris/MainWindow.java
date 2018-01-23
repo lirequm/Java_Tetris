@@ -15,18 +15,23 @@ public class MainWindow extends JFrame {
     private PlayField playField;
     private Timer gameTimer, systemTimer;
 
+    public static MainWindow mainWindow;
 
-    private MainWindow() throws HeadlessException {
+
+    public MainWindow() throws HeadlessException {
 
         setSize(520, 520);
         setResizable(false);
         MenuBar menuBar = new MenuBar();
         setMenuBar(menuBar);
-        Menu file_menu = new Menu("File");
-        menuBar.add(file_menu);
-        MenuItem close_btn = new MenuItem("Close");
-        file_menu.add(close_btn);
-        close_btn.setActionCommand("exit");
+        Menu fileMenu = new Menu("File");
+        menuBar.add(fileMenu);
+//        MenuItem resetBtn = new MenuItem("Reset");
+//        fileMenu.add(resetBtn);
+//        resetBtn.setActionCommand("reset");
+        MenuItem closeBtn = new MenuItem("Close");
+        fileMenu.add(closeBtn);
+        closeBtn.setActionCommand("exit");
         Menu prop_menu = new Menu("Properties");
         menuBar.add(prop_menu);
         setFocusable(true);
@@ -40,7 +45,7 @@ public class MainWindow extends JFrame {
         add(systemSidePanel);
 
         ActionListener actionListener = new Action(this, playField);
-        close_btn.addActionListener(actionListener);
+        closeBtn.addActionListener(actionListener);
 
         gameTimer = new GameTimer(1000, actionListener);
         systemTimer = new SystemTimer(100, actionListener);
@@ -59,7 +64,7 @@ public class MainWindow extends JFrame {
     }
 
     public static void main(String[] args) {
-        new MainWindow();
+        mainWindow = new MainWindow();
     }
 
     public SystemSide getSystemSide() {

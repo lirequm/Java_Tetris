@@ -11,7 +11,7 @@ public class PlayField extends JPanel {
     public static int figureCounter;
     private final Color PLAY_FIELD_BACKGROUND = Color.CYAN;
     public int figurePos;
-    public int figure_switch = (int) (Math.random() * 7);
+    int figure_switch = (int) (Math.random() * 7);
     private int playFieldWidth = 260;
     private int playFieldHeight = 520;
     private int figureXSize = 26;
@@ -49,6 +49,7 @@ public class PlayField extends JPanel {
                         bottomArea = down_area;
                     }
                 }
+                y += figureYSize;
             }
             y -= figureYSize;
         }

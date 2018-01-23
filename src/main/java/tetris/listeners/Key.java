@@ -54,6 +54,15 @@ public class Key extends KeyAdapter {
                     System.out.println(getCoordinates(playField));
                     playField.repaint();
                     break;
+                case KeyEvent.VK_SPACE:
+                    mainWindow.getSystemTimer().stop();
+                    mainWindow.getGameTimer().stop();
+                    break;
+            }
+        } else {
+            if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+                mainWindow.getSystemTimer().start();
+                mainWindow.getGameTimer().start();
             }
         }
     }

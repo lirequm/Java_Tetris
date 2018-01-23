@@ -24,8 +24,10 @@ public class SystemSide extends JPanel {
         time_label = (JLabel) add(new JLabel("0.00"));
         start_btn = (JButton) add(new JButton("Start"));
         start_btn.setActionCommand("startSystemTimer");
+        start_btn.setFocusable(false);
         pause_btn = (JButton) add(new JButton("Pause"));
         pause_btn.setActionCommand("stopSystemTimer");
+        pause_btn.setFocusable(false);
     }
 
     public NextFigurePanel getNextFigure() {

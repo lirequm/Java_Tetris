@@ -71,9 +71,10 @@ public class Action implements ActionListener {
                 System.out.println("Step down");
                 System.out.println(playField.getFigure().getBounds().x + " " + playField.getFigure().getBounds().y);
                 playField.repaint();
-//                nextFigure.repaint();
                 break;
-
+//            case "reset":
+//                MainWindow.mainWindow = new MainWindow();
+//                break;
         }
     }
 }
