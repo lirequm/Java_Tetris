@@ -9,7 +9,7 @@ import java.awt.geom.Area;
 
 public class PlayField extends JPanel {
     public static int figureCounter;
-    private final Color PLAY_FIELD_BACKGROUND = Color.CYAN;
+    private final Color PLAY_FIELD_BACKGROUND = Color.GRAY;
     public int figurePos;
     int figure_switch = (int) (Math.random() * 7);
     private int playFieldWidth = 260;
@@ -18,7 +18,7 @@ public class PlayField extends JPanel {
     private int figureYSize = 26;
     private Area figure;
     private Area bottomArea = new Area();
-    private Color figureColor = Color.RED;
+    private Color figureColor = Color.ORANGE;
     private MainWindow mainWindow;
     private int currFigureSwitch;
 
