@@ -1,4 +1,4 @@
-package tetris;
+package tetris.panels;
 
 import tetris.figures.Figure;
 

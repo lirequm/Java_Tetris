@@ -1,6 +1,6 @@
 package tetris.figures;
 
-import tetris.PlayField;
+import tetris.panels.PlayField;
 
 import java.awt.*;
 import java.awt.geom.Area;

@@ -1,6 +1,6 @@
 package tetris.move;
 
-import tetris.PlayField;
+import tetris.panels.PlayField;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;

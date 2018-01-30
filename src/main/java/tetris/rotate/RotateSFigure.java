@@ -1,6 +1,6 @@
 package tetris.rotate;
 
-import tetris.PlayField;
+import tetris.panels.PlayField;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -21,8 +21,9 @@ class RotateSFigure {
                             1,
                             figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
                             figure.getBounds().y + (playField.getFigureYSize() / 2)));
-                    if((figureClone.getBounds().x >= 0)
-                            && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
+                    if((figureClone.getBounds().x >= 0) &&
+                            (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width) &&
+                            (figure.getBounds().y < playField.getPlayFieldHeight() - figureClone.getBounds().height)) {
                         figure.transform(AffineTransform.getQuadrantRotateInstance(
                                 1,
                                 figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
@@ -35,8 +36,9 @@ class RotateSFigure {
                             -1,
                             figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
                             figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                    if((figureClone.getBounds().x >= 0)
-                            && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
+                    if((figureClone.getBounds().x >= 0) &&
+                            (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width) &&
+                            (figure.getBounds().y < playField.getPlayFieldHeight() - figureClone.getBounds().height)) {
                         figure.transform(AffineTransform.getQuadrantRotateInstance(
                                 -1,
                                 figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
@@ -52,8 +54,9 @@ class RotateSFigure {
                             1,
                             figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
                             figure.getBounds().y + (playField.getFigureYSize() / 2)));
-                    if((figureClone.getBounds().x >= 0)
-                            && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
+                    if((figureClone.getBounds().x >= 0) &&
+                            (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width) &&
+                            (figure.getBounds().y < playField.getPlayFieldHeight() - figureClone.getBounds().height)) {
                         figureClone.intersect(playField.getBottomArea());
                         if (figureClone.isEmpty()) {
                             figure.transform(AffineTransform.getQuadrantRotateInstance(
@@ -69,8 +72,9 @@ class RotateSFigure {
                             -1,
                             figure.getBounds().x + (playField.getFigureXSize() / 2 * 3),
                             figure.getBounds().y + (playField.getFigureYSize() / 2 * 3)));
-                    if((figureClone.getBounds().x >= 0)
-                            && (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width)) {
+                    if((figureClone.getBounds().x >= 0) &&
+                            (figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width) &&
+                            (figure.getBounds().y < playField.getPlayFieldHeight() - figureClone.getBounds().height)) {
                         figureClone.intersect(playField.getBottomArea());
                         if (figureClone.isEmpty()) {
                             System.out.println((figureClone.getBounds().x <= playField.getPlayFieldWidth() - figureClone.getBounds().width));

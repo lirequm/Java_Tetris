@@ -1,40 +1,56 @@
 package tetris;
 
 import tetris.listeners.Action;
+import tetris.listeners.Item;
 import tetris.listeners.Key;
+import tetris.panels.IconPanel;
+import tetris.panels.PlayField;
+import tetris.panels.SystemSide;
 import tetris.timers.GameTimer;
 import tetris.timers.SystemTimer;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyListener;
 
 public class MainWindow extends JFrame {
     private SystemSide systemSide;
     private PlayField playField;
     private Timer gameTimer, systemTimer;
+    public boolean relaxSelected;
+    public IconPanel fPanel = new IconPanel(Color.ORANGE);
+    public IconPanel bPanel = new IconPanel(Color.GRAY);
+    private int gameTimerDelay = 1000;
 
-    public static MainWindow mainWindow;
+    private MainWindow() throws HeadlessException {
 
-
-    public MainWindow() throws HeadlessException {
-
-        setSize(520, 520);
         setResizable(false);
-        MenuBar menuBar = new MenuBar();
-        setMenuBar(menuBar);
-        Menu fileMenu = new Menu("File");
+        setFocusable(true);
+
+        JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
+        JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
 //        MenuItem resetBtn = new MenuItem("Reset");
 //        fileMenu.add(resetBtn);
 //        resetBtn.setActionCommand("reset");
-        MenuItem closeBtn = new MenuItem("Close");
+        JMenuItem closeBtn = new JMenuItem("Close");
         fileMenu.add(closeBtn);
         closeBtn.setActionCommand("exit");
-        Menu prop_menu = new Menu("Properties");
-        menuBar.add(prop_menu);
-        setFocusable(true);
+        JMenu propMenu = new JMenu("Properties");
+        menuBar.add(propMenu);
+        JMenuItem fColor = new JMenuItem("Figure Color", fPanel);
+        propMenu.add(fColor);
+        fColor.setActionCommand("fColorChooser");
+        JMenuItem bColor = new JMenuItem("BackGround Color", bPanel);
+        propMenu.add(bColor);
+        bColor.setActionCommand("bColorChooser");
+        propMenu.addSeparator();
+        JCheckBoxMenuItem cbRelax = new JCheckBoxMenuItem("Relax mode");
+        propMenu.add(cbRelax);
+        cbRelax.setState(false);
 
         setLayout(new GridLayout(1, 2));
         playField = new PlayField(this);
@@ -46,8 +62,13 @@ public class MainWindow extends JFrame {
 
         ActionListener actionListener = new Action(this, playField);
         closeBtn.addActionListener(actionListener);
+        fColor.addActionListener(actionListener);
+        bColor.addActionListener(actionListener);
 
-        gameTimer = new GameTimer(1000, actionListener);
+        ItemListener itemListener = new Item(this);
+        cbRelax.addItemListener(itemListener);
+
+        gameTimer = new GameTimer(gameTimerDelay, actionListener);
         systemTimer = new SystemTimer(100, actionListener);
 
         KeyListener keyListener = new Key(this, playField);
@@ -56,15 +77,18 @@ public class MainWindow extends JFrame {
         systemSide.getStart_btn().addActionListener(actionListener);
         systemSide.getPause_btn().addActionListener(actionListener);
 
+        fPanel.setColor(playField.getFigureColor());
+        bPanel.setColor(playField.getBackgroundColor());
+
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setSize(520, 520);
         pack();
         setVisible(true);
-        requestFocus();
     }
 
     public static void main(String[] args) {
-        mainWindow = new MainWindow();
+        new MainWindow();
     }
 
     public SystemSide getSystemSide() {
@@ -81,5 +105,16 @@ public class MainWindow extends JFrame {
 
     public Timer getSystemTimer() {
         return systemTimer;
+    }
+
+    public int getGameTimerDelay() {
+        return gameTimerDelay;
+    }
+
+    public void setGameTimerDelay(int gameTimerDelay) {
+        if(!relaxSelected) {
+            this.gameTimerDelay = gameTimerDelay;
+            gameTimer.setDelay(gameTimerDelay);
+        }
     }
 }

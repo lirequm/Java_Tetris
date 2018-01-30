@@ -1,6 +1,6 @@
 package tetris.rotate;
 
-import tetris.PlayField;
+import tetris.panels.PlayField;
 
 public class Rotate {
 

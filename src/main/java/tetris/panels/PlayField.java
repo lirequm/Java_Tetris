@@ -1,5 +1,6 @@
-package tetris;
+package tetris.panels;
 
+import tetris.MainWindow;
 import tetris.figures.Figure;
 
 import javax.swing.*;
@@ -9,7 +10,7 @@ import java.awt.geom.Area;
 
 public class PlayField extends JPanel {
     public static int figureCounter;
-    private final Color PLAY_FIELD_BACKGROUND = Color.GRAY;
+    private Color backgroundColor = Color.GRAY;
     public int figurePos;
     int figure_switch = (int) (Math.random() * 7);
     private int playFieldWidth = 260;
@@ -21,15 +22,24 @@ public class PlayField extends JPanel {
     private Color figureColor = Color.ORANGE;
     private MainWindow mainWindow;
     private int currFigureSwitch;
+    private int score;
+    private int completedActions;
+    private int completedLines;
 
 
-    PlayField(MainWindow mainWindow) {
+    public PlayField(MainWindow mainWindow) {
         this.mainWindow = mainWindow;
         setPreferredSize(new Dimension(playFieldWidth, playFieldHeight));
     }
 
+    private void scoreLabelUpdate(int scoreIncrease) {
+        SystemSide.scoreLabel.setText(String.valueOf(score += scoreIncrease));
+        SystemSide.scoreLabel.repaint();
+    }
+
     public void fillingCheck() {
         int y = playFieldHeight - figureYSize;
+        int count = 0;
         while (y > 0) {
             if (bottomArea.contains(0, y, playFieldWidth, figureYSize)) {
                 Area down_area = new Area(new Rectangle(0, y + figureYSize, playFieldWidth, playFieldHeight));
@@ -50,8 +60,17 @@ public class PlayField extends JPanel {
                     }
                 }
                 y += figureYSize;
+                count++;
+                SystemSide.completeLines.setText(String.valueOf(++completedLines));
+                SystemSide.completeLines.repaint();
             }
             y -= figureYSize;
+        }
+        if (count > 0) {
+            scoreLabelUpdate(100 * (count * 2) - 100);
+            mainWindow.setGameTimerDelay((int)(mainWindow.getGameTimerDelay() * 0.9));
+            SystemSide.completeActions.setText(String.valueOf(++completedActions));
+            SystemSide.completeActions.repaint();
         }
     }
 
@@ -118,14 +137,26 @@ public class PlayField extends JPanel {
         return figureColor;
     }
 
+    public void setFigureColor(Color figureColor) {
+        this.figureColor = figureColor;
+    }
+
     public int getCurrFigureSwitch() {
         return currFigureSwitch;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        setBackground(PLAY_FIELD_BACKGROUND);
+        setBackground(backgroundColor);
         Graphics2D g2d = (Graphics2D) g;
 
         if (figureCounter < 1) {

@@ -1,10 +1,10 @@
 package tetris.listeners;
 
 import tetris.MainWindow;
-import tetris.PlayField;
 import tetris.move.MoveDown;
 import tetris.move.MoveLeft;
 import tetris.move.MoveRight;
+import tetris.panels.PlayField;
 import tetris.rotate.Rotate;
 
 import java.awt.event.KeyAdapter;

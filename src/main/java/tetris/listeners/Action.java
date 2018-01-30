@@ -1,9 +1,11 @@
 package tetris.listeners;
 
 import tetris.MainWindow;
-import tetris.PlayField;
-import tetris.SystemSide;
+import tetris.panels.PlayField;
+import tetris.panels.SystemSide;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
@@ -14,15 +16,18 @@ public class Action implements ActionListener {
     private MainWindow mainWindow;
     private PlayField playField;
     private double time = 0.00f;
+
     public Action(MainWindow mainWindow, PlayField playField) {
         this.mainWindow = mainWindow;
         this.playField = playField;
     }
 
-    private void label_update() {
-        SystemSide.time_label.setText(new DecimalFormat("#0.00").format(time = time + 0.1));
-        SystemSide.time_label.repaint();
+    private void timeLabelUpdate() {
+        SystemSide.timeLabel.setText(new DecimalFormat("#0.00").format(time = time + 0.1));
+        SystemSide.timeLabel.repaint();
     }
+
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -39,7 +44,7 @@ public class Action implements ActionListener {
                 mainWindow.getGameTimer().stop();
                 break;
             case "systemTimerAction":
-                label_update();
+                timeLabelUpdate();
                 break;
             case "gameTimerAction":
                 if (playField.getBottomArea().isEmpty()){
@@ -72,9 +77,18 @@ public class Action implements ActionListener {
                 System.out.println(playField.getFigure().getBounds().x + " " + playField.getFigure().getBounds().y);
                 playField.repaint();
                 break;
-//            case "reset":
-//                MainWindow.mainWindow = new MainWindow();
-//                break;
+            case "fColorChooser":
+                Color fColor = JColorChooser.showDialog(mainWindow, "Choose figure color", Color.ORANGE);
+                playField.setFigureColor(fColor);
+                mainWindow.fPanel.setColor(fColor);
+                playField.repaint();
+                break;
+            case "bColorChooser":
+                Color bColor = JColorChooser.showDialog(mainWindow, "Choose background color", Color.GRAY);
+                playField.setBackgroundColor(bColor);
+                mainWindow.bPanel.setColor(bColor);
+                playField.repaint();
+                break;
         }
     }
 }
